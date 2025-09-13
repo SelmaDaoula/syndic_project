@@ -8,6 +8,15 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     /**
+     * The Artisan commands provided by your application.
+     *
+     * @var array
+     */
+    protected $commands = [
+        Commands\CheckExpiredSubscriptions::class,
+    ];
+
+    /**
      * Define the application's command schedule.
      *
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
@@ -15,7 +24,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Vérifier les abonnements expirés tous les jours à 1h00 du matin
+        $schedule->command('subscriptions:check-expired')
+            ->dailyAt('01:00')
+            ->withoutOverlapping()
+            ->runInBackground();
+
+        // Optionnel: Log pour debug
+        $schedule->command('subscriptions:check-expired')
+            ->dailyAt('01:00')
+            ->appendOutputTo(storage_path('logs/scheduler.log'));
     }
 
     /**

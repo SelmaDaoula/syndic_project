@@ -4,43 +4,45 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Bloc extends Model
+class Bloc extends Model 
 {
     public $timestamps = false;
+    
+    // CORRIGÉ avec les vrais noms de colonnes de votre table
+    protected $fillable = [
+        'nom',
+        'nombre_appartement',  // FIXÉ: nombreAppartement → nombre_appartement
+        'nombre_etages',       // FIXÉ: nombreEtages → nombre_etages
+        'surface_totale',      // FIXÉ: surfaceTotale → surface_totale
+        'Immeuble_id',
+    ];
 
-    public function appartements()
-{
-    return $this->hasMany(Appartement::class, 'bloc_id');
-}
-
-
-    /**
-     * Relation Bloc → Immeuble
-     */
-    public function immeuble()
+    public function appartements() 
     {
-         return $this->belongsTo(Immeuble::class, 'ImmeubleId');
+        return $this->hasMany(Appartement::class, 'bloc_id'); 
     }
 
-    /**
-     * Mettre à jour nombreBlocs automatiquement
-     */
-   protected static function booted()
-{
-    static::created(function ($bloc) {
-        $bloc->refresh(); // recharge le bloc pour avoir l'immeuble_id
-        if ($bloc->immeuble) {
-            $bloc->immeuble->nombreBlocs = $bloc->immeuble->blocs()->count();
-            $bloc->immeuble->save();
-        }
-    });
+    public function immeuble()
+    {
+        return $this->belongsTo(Immeuble::class, 'Immeuble_id');
+    }
 
-    static::deleted(function ($bloc) {
-        if ($bloc->immeuble) {
-            $bloc->immeuble->nombreBlocs = $bloc->immeuble->blocs()->count();
-            $bloc->immeuble->save();
-        }
-    });
-}
+    protected static function booted() 
+    {
+        static::created(function ($bloc) {
+            $bloc->refresh();
+            if ($bloc->immeuble) {
+                $bloc->immeuble->nombre_blocs = $bloc->immeuble->blocs()->count();
+                $bloc->immeuble->save();
+            }
+        });
 
+        static::deleted(function ($bloc) {
+            if ($bloc->immeuble) {
+                $bloc->immeuble->nombre_blocs = $bloc->immeuble->blocs()->count();
+                $bloc->immeuble->save();
+            }
+        }); 
+    }
 }
+?>

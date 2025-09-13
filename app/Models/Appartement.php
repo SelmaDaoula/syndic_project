@@ -6,12 +6,30 @@ use Illuminate\Database\Eloquent\Model;
 
 class Appartement extends Model
 {
-    public $timestamps = false;
+    // AJOUT DE LA PROPRIÉTÉ FILLABLE
+    protected $fillable = [
+        'type_appartement',
+        'surface',
+        'bloc_id',
+        'proprietaire_id',
+        'nombre_pieces',
+        'statut',
+        'numero'
+    ];
+
+    // CORRECTION : Activer les timestamps
+    public $timestamps = true;
 
     // Un appartement appartient à un bloc
     public function bloc()
     {
         return $this->belongsTo(Bloc::class, 'bloc_id');
+    }
+
+    // AJOUT : Relation proprietaire (un seul propriétaire principal)
+    public function proprietaire()
+    {
+        return $this->belongsTo(Proprietaire::class, 'proprietaire_id');
     }
 
     // Un appartement peut avoir plusieurs propriétaires (cas héritage)

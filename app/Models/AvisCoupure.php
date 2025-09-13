@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
-class AvisCoupure extends Model
+class Aviscoupure extends Model
 {
     
 }
