@@ -4,248 +4,217 @@
 
 @section('content')
     <div class="container-fluid px-4">
-        <!-- Header Section moderne -->
+        <!-- Header avec animation d'entrée -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="header-modern">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="header-icon">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            <div>
-                                <h1 class="header-title">Mes Immeubles</h1>
-                                <p class="header-subtitle">Promoteur: <strong>{{ $promoteur->nom ?? '' }} {{ $promoteur->prenom ?? '' }}</strong></p>
-                            </div>
-                        </div>
-                        @if($immeuble)
-                            <a href="{{ route('promoteur.blocs.create') }}" class="btn btn-primary-modern">
-                                <i class="fas fa-plus me-2"></i>Ajouter Bloc
-                            </a>
-                        @endif
+                <div class="d-flex justify-content-between align-items-center fade-in-up">
+                    <div>
+                        <h1 class="page-title">Mes Immeubles</h1>
+                        <p class="page-subtitle">{{ $promoteur->nom ?? '' }} {{ $promoteur->prenom ?? '' }}</p>
                     </div>
+                    @if($immeuble)
+                        <a href="{{ route('promoteur.blocs.create') }}" class="btn btn-primary-modern pulse-animation">
+                            <i class="fas fa-plus me-2"></i>Ajouter Bloc
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
 
-        <!-- Flash Messages -->
+        <!-- Flash Messages avec animations -->
         @if(session('success'))
-            <div class="alert alert-success-modern" role="alert">
+            <div class="alert alert-success-modern slide-down" role="alert">
                 <div class="d-flex align-items-center">
-                    <i class="fas fa-check-circle me-3"></i>
-                    <div class="flex-grow-1">{{ session('success') }}</div>
+                    <div class="alert-icon-wrapper success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">{{ session('success') }}</div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             </div>
         @endif
 
         @if($errors->any())
-            <div class="alert alert-danger-modern" role="alert">
+            <div class="alert alert-danger-modern slide-down" role="alert">
                 <div class="d-flex align-items-center">
-                    <i class="fas fa-exclamation-circle me-3"></i>
-                    <div class="flex-grow-1">{{ $errors->first() }}</div>
+                    <div class="alert-icon-wrapper error">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">{{ $errors->first() }}</div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             </div>
         @endif
 
         @if($immeuble)
-            <!-- Immeuble Card principale -->
-            <div class="card-modern">
-                <!-- En-tête de l'immeuble -->
-                <div class="card-header-modern">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="building-icon-large">
-                                <i class="fas fa-building"></i>
+            <!-- Vue en deux colonnes avec animations -->
+            <div class="row g-4">
+                <!-- Colonne gauche : Informations immeuble -->
+                <div class="col-lg-4">
+                    <div class="building-summary-card fade-in-left">
+                        <div class="building-info">
+                            <div class="building-icon">
+                                <i class="fas fa-building icon-bounce"></i>
                             </div>
                             <div>
-                                <h2 class="building-title">{{ $immeuble->nom ?? 'Immeuble' }}</h2>
+                                <h3 class="building-name">{{ $immeuble->nom ?? 'Immeuble' }}</h3>
                                 <p class="building-address">{{ $immeuble->adresse }}</p>
+                                <span class="status-badge status-{{ $immeuble->statut == 'actif' ? 'success' : 'warning' }} pulse-slow">
+                                    {{ ucfirst($immeuble->statut ?? 'Inactif') }}
+                                </span>
                             </div>
                         </div>
-                        <div>
-                            @php
-                                $statusClass = $immeuble->statut == 'actif' ? 'success' : 'warning';
-                            @endphp
-                            <span class="status-badge status-{{ $statusClass }}">
-                                <i class="fas fa-{{ $immeuble->statut == 'actif' ? 'check-circle' : 'clock' }} me-2"></i>
-                                {{ ucfirst($immeuble->statut ?? 'Inactif') }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Section Statistiques -->
-                <div class="stats-container">
-                    <div class="row g-4">
-                        <div class="col-lg-3 col-md-6">
-                            <div class="stat-card stat-primary">
-                                <div class="stat-icon-container">
-                                    <i class="fas fa-layer-group"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h3 class="stat-number">{{ $stats['total_blocs'] ?? 0 }}</h3>
-                                    <p class="stat-label">Blocs</p>
-                                </div>
+                        <!-- Statistiques compactes avec hover effects -->
+                        <div class="stats-compact">
+                            <div class="stat-item hover-lift" data-tooltip="Nombre total de blocs">
+                                <span class="stat-number counter-animation">{{ $stats['total_blocs'] ?? 0 }}</span>
+                                <span class="stat-label">Blocs</span>
+                            </div>
+                            <div class="stat-item hover-lift" data-tooltip="Nombre total d'appartements">
+                                <span class="stat-number counter-animation">{{ $stats['total_appartements'] ?? 0 }}</span>
+                                <span class="stat-label">Appartements</span>
+                            </div>
+                            <div class="stat-item hover-lift" data-tooltip="Surface totale construite">
+                                <span class="stat-number counter-animation">{{ number_format($stats['surface_totale'] ?? 0) }}</span>
+                                <span class="stat-label">m²</span>
+                            </div>
+                            <div class="stat-item hover-lift" data-tooltip="Année de construction">
+                                <span class="stat-number">{{ $stats['annee_construction'] ?? 'N/A' }}</span>
+                                <span class="stat-label">Année</span>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="stat-card stat-success">
-                                <div class="stat-icon-container">
-                                    <i class="fas fa-ruler-combined"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h3 class="stat-number">{{ number_format($stats['surface_totale'] ?? 0) }}</h3>
-                                    <p class="stat-label">m² Total</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="stat-card stat-info">
-                                <div class="stat-icon-container">
-                                    <i class="fas fa-door-open"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h3 class="stat-number">{{ $stats['total_appartements'] ?? 0 }}</h3>
-                                    <p class="stat-label">Appartements</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="stat-card stat-warning">
-                                <div class="stat-icon-container">
-                                    <i class="fas fa-calendar-alt"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h3 class="stat-number">{{ $stats['annee_construction'] ?? 'N/A' }}</h3>
-                                    <p class="stat-label">Année</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Section Blocs -->
-                <div class="blocs-container">
-                    <div class="section-header">
-                        <h3 class="section-title">
-                            <i class="fas fa-th-large me-2"></i>
-                            Liste des Blocs
-                        </h3>
-                        <span class="blocs-count">{{ $immeuble->blocs->count() }} blocs</span>
-                    </div>
-
-                    @if($immeuble->blocs->count() > 0)
-                        <div class="blocs-grid">
-                            @foreach($immeuble->blocs as $index => $bloc)
-                                @php
-                                    $colors = ['primary', 'success', 'info', 'warning', 'danger', 'purple'];
-                                    $color = $colors[$index % count($colors)];
-                                @endphp
-                                <div class="bloc-card bloc-{{ $color }}">
-                                    <div class="bloc-header">
-                                        <h5 class="bloc-name">{{ $bloc->nom }}</h5>
-                                        <div class="bloc-badge bloc-badge-{{ $color }}">
-                                            {{ substr($bloc->nom, -1) }}
-                                        </div>
-                                    </div>
-
-                                    <div class="bloc-stats">
-                                        <div class="bloc-stat-item">
-                                            <span class="stat-value">{{ $bloc->nombre_appartement ?? 0 }}</span>
-                                            <span class="stat-text">Appartements</span>
-                                        </div>
-                                        <div class="bloc-stat-item">
-                                            <span class="stat-value">{{ $bloc->nombre_etages ?? 0 }}</span>
-                                            <span class="stat-text">Étages</span>
-                                        </div>
-                                        <div class="bloc-stat-item">
-                                            <span class="stat-value">{{ number_format($bloc->surface_totale ?? 0) }}</span>
-                                            <span class="stat-text">m²</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="generation-status {{ $bloc->appartements->count() > 0 ? 'generated' : 'pending' }}">
-                                        <i class="fas fa-{{ $bloc->appartements->count() > 0 ? 'check' : 'clock' }} me-1"></i>
-                                        {{ $bloc->appartements->count() }} appartements générés
-                                    </div>
-                                    
-                                    <div class="bloc-actions">
-                                        <a href="{{ route('promoteur.appartements.index', ['bloc_id' => $bloc->id]) }}" 
-                                           class="btn btn-outline-modern">
-                                            <i class="fas fa-eye me-1"></i>Voir
-                                        </a>
-
-                                        @if($bloc->appartements->count() == 0)
-                                            <button onclick="generateApartments({{ $bloc->id }})" 
-                                                    class="btn btn-success-modern">
-                                                <i class="fas fa-magic me-1"></i>Générer
-                                            </button>
-                                        @else
-                                            <button onclick="regenerateApartments({{ $bloc->id }})" 
-                                                    class="btn btn-warning-modern">
-                                                <i class="fas fa-sync me-1"></i>Regénérer
-                                            </button>
-                                        @endif
-                                    </div>
+                        <!-- Actions rapides avec effets améliorés -->
+                        <div class="quick-actions">
+                            <a href="{{ route('promoteur.immeubles.export-pdf') }}" class="action-btn">
+                                <div class="action-icon-wrapper">
+                                    <i class="fas fa-download"></i>
                                 </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="empty-state">
-                            <div class="empty-icon">
-                                <i class="fas fa-th-large"></i>
-                            </div>
-                            <h4 class="empty-title">Aucun bloc trouvé</h4>
-                            <p class="empty-description">Commencez par ajouter des blocs à votre immeuble.</p>
-                            <a href="{{ route('promoteur.blocs.create') }}" class="btn btn-primary-modern">
-                                <i class="fas fa-plus me-2"></i>Ajouter un Bloc
+                                <span>Exporter</span>
                             </a>
-                        </div>
-                    @endif
-                </div>
-
-                <!-- Footer avec actions -->
-                <div class="card-footer-modern">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                        <div class="d-flex gap-2 flex-wrap">
-                            <a href="{{ route('promoteur.immeubles.export-pdf') }}" class="btn btn-outline-modern">
-                                <i class="fas fa-download me-2"></i>Exporter PDF
-                            </a>
-                            <button class="btn btn-outline-modern">
-                                <i class="fas fa-chart-line me-2"></i>Statistiques
+                            <button class="action-btn">
+                                <div class="action-icon-wrapper">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <span>Stats</span>
                             </button>
-                            <a href="{{ route('promoteur.syndics.assign') }}" class="btn btn-outline-modern">
-                                <i class="fas fa-user-tie me-2"></i>
-                                {{ $immeuble->syndic_id ? 'Gérer Syndic' : 'Assigner Syndic' }}
+                            <a href="{{ route('promoteur.syndics.assign') }}" class="action-btn">
+                                <div class="action-icon-wrapper">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <span>Syndic</span>
                             </a>
+                            <button class="action-btn">
+                                <div class="action-icon-wrapper">
+                                    <i class="fas fa-edit"></i>
+                                </div>
+                                <span>Modifier</span>
+                            </button>
                         </div>
-                        <button class="btn btn-primary-modern">
-                            <i class="fas fa-edit me-2"></i>Modifier Immeuble
-                        </button>
+                    </div>
+                </div>
+
+                <!-- Colonne droite : Liste des blocs -->
+                <div class="col-lg-8">
+                    <div class="blocs-section fade-in-right">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-th-large me-2 text-primary"></i>
+                                Liste des Blocs
+                            </h3>
+                            <span class="blocs-count">{{ $immeuble->blocs->count() }} blocs</span>
+                        </div>
+
+                        @if($immeuble->blocs->count() > 0)
+                            <div class="blocs-list">
+                                @foreach($immeuble->blocs as $index => $bloc)
+                                    <div class="bloc-item fade-in-item" style="animation-delay: {{ $index * 100 }}ms">
+                                        <div class="bloc-main-info">
+                                            <div class="bloc-badge">
+                                                {{ substr($bloc->nom, -1) }}
+                                            </div>
+                                            <div class="bloc-details">
+                                                <h5 class="bloc-name">{{ $bloc->nom }}</h5>
+                                                <div class="bloc-stats">
+                                                    <span class="stat-chip">
+                                                        <i class="fas fa-door-open me-1"></i>
+                                                        {{ $bloc->nombre_appartement ?? 0 }} appts
+                                                    </span>
+                                                    <span class="stat-chip">
+                                                        <i class="fas fa-layer-group me-1"></i>
+                                                        {{ $bloc->nombre_etages ?? 0 }} étages
+                                                    </span>
+                                                    <span class="stat-chip">
+                                                        <i class="fas fa-expand me-1"></i>
+                                                        {{ number_format($bloc->surface_totale ?? 0) }} m²
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="bloc-status">
+                                            <div class="generation-status {{ $bloc->appartements->count() > 0 ? 'generated' : 'pending' }}">
+                                                <div class="status-icon">
+                                                    <i class="fas fa-{{ $bloc->appartements->count() > 0 ? 'check' : 'clock' }}"></i>
+                                                </div>
+                                                <span>{{ $bloc->appartements->count() }} générés</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="bloc-actions">
+                                            <a href="{{ route('promoteur.appartements.index', ['bloc_id' => $bloc->id]) }}" 
+                                               class="btn btn-outline-sm" data-tooltip="Voir les appartements">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+
+                                            @if($bloc->appartements->count() == 0)
+                                                <button onclick="generateApartments({{ $bloc->id }})" 
+                                                        class="btn btn-success-sm" data-tooltip="Générer les appartements">
+                                                    <i class="fas fa-magic"></i>
+                                                </button>
+                                            @else
+                                                <button onclick="regenerateApartments({{ $bloc->id }})" 
+                                                        class="btn btn-warning-sm" data-tooltip="Regénérer les appartements">
+                                                    <i class="fas fa-sync"></i>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-th-large floating-icon"></i>
+                                </div>
+                                <h4 class="empty-title">Aucun bloc trouvé</h4>
+                                <p class="empty-description">Commencez par ajouter des blocs à votre immeuble.</p>
+                                <a href="{{ route('promoteur.blocs.create') }}" class="btn btn-primary-modern">
+                                    <i class="fas fa-plus me-2"></i>Ajouter un Bloc
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
 
         @else
-            <!-- État vide (pas d'immeuble) -->
-            <div class="card-modern">
-                <div class="empty-state-large">
-                    <div class="empty-icon-large">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <h3 class="empty-title-large">Aucun immeuble trouvé</h3>
-                    <p class="empty-description-large">Vous n'avez pas encore d'immeuble assigné. Contactez l'administrateur pour plus d'informations.</p>
-                    <button class="btn btn-primary-modern btn-lg">
-                        <i class="fas fa-phone me-2"></i>Contacter Support
-                    </button>
+            <!-- État vide (pas d'immeuble) avec animation -->
+            <div class="empty-state-large fade-in-up">
+                <div class="empty-icon-large">
+                    <i class="fas fa-building floating-icon"></i>
                 </div>
+                <h3 class="empty-title-large">Aucun immeuble trouvé</h3>
+                <p class="empty-description-large">Vous n'avez pas encore d'immeuble assigné. Contactez l'administrateur pour plus d'informations.</p>
+                <button class="btn btn-primary-modern btn-lg pulse-animation">
+                    <i class="fas fa-phone me-2"></i>Contacter Support
+                </button>
             </div>
         @endif
     </div>
 
-    <!-- JavaScript (inchangé) -->
+    <!-- JavaScript inchangé -->
     <script>
         function generateApartments(blocId) {
             if (confirm('Générer automatiquement les appartements pour ce bloc ?')) {
@@ -288,281 +257,459 @@
                 });
             }
         }
+
+        // Animation des compteurs au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            const counters = document.querySelectorAll('.counter-animation');
+            counters.forEach(counter => {
+                const finalValue = parseInt(counter.textContent);
+                let currentValue = 0;
+                const increment = Math.ceil(finalValue / 30);
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        counter.textContent = finalValue.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = currentValue.toLocaleString();
+                    }
+                }, 50);
+            });
+        });
     </script>
 
-    <!-- CSS Simplifié et Clair -->
+    <!-- CSS amélioré avec nouvelles animations -->
     <style>
-        /* Configuration de base */
+        /* Base inchangée */
         body {
-            background-color: #f8fafc;
+            background-color: #FFEBD0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Header moderne */
-        .header-modern {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
+        /* Animations et transitions */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .header-icon {
-            width: 60px;
-            height: 60px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1.5rem;
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
-        .header-icon i {
-            font-size: 24px;
-            color: white;
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
-        .header-title {
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulseSlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Classes d'animation */
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .fade-in-left {
+            animation: fadeInLeft 0.6s ease-out;
+        }
+
+        .fade-in-right {
+            animation: fadeInRight 0.6s ease-out;
+        }
+
+        .fade-in-item {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .slide-down {
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        .pulse-slow {
+            animation: pulseSlow 3s infinite;
+        }
+
+        .icon-bounce:hover {
+            animation: bounce 1s ease infinite;
+        }
+
+        .floating-icon {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Header */
+        .page-title {
             font-size: 2rem;
             font-weight: 700;
+            color: #173B61;
             margin: 0;
-            color: white;
+            background: linear-gradient(135deg, #173B61 0%, #17616E 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .header-subtitle {
+        .page-subtitle {
+            color: #7697A0;
             margin: 0;
-            opacity: 0.9;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
-        /* Boutons modernes */
+        /* Boutons améliorés */
         .btn-primary-modern {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #FD8916 0%, #FF9933 100%);
             border: none;
             color: white;
             padding: 12px 24px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+            box-shadow: 0 4px 15px rgba(253, 137, 22, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary-modern:hover::before {
+            left: 100%;
         }
 
         .btn-primary-modern:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
+            box-shadow: 0 8px 25px rgba(253, 137, 22, 0.4);
             color: white;
         }
 
-        .btn-success-modern {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-success-modern:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
-        }
-
-        .btn-warning-modern {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-warning-modern:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
-        }
-
-        .btn-outline-modern {
-            border: 2px solid #e2e8f0;
-            color: #4a5568;
-            background: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-modern:hover {
-            border-color: #4facfe;
-            color: #4facfe;
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        /* Alertes modernes */
-        .alert-success-modern {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            border: 1px solid #b8dacc;
+        /* Alertes améliorées */
+        .alert-success-modern, .alert-danger-modern {
             border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            color: #155724;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .alert-success-modern {
+            background: rgba(16, 185, 129, 0.1);
+            color: #065f46;
         }
 
         .alert-danger-modern {
-            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-            border: 1px solid #f1b0b7;
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            color: #721c24;
+            background: rgba(240, 5, 15, 0.1);
+            color: #7f1d1d;
         }
 
-        /* Card principale */
-        .card-modern {
-            background: white;
+        .alert-icon-wrapper {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .alert-icon-wrapper.success {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .alert-icon-wrapper.error {
+            background: rgba(240, 5, 15, 0.2);
+        }
+
+        /* Card résumé immeuble améliorée */
+        .building-summary-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            height: fit-content;
+            position: relative;
             overflow: hidden;
         }
 
-        .card-header-modern {
-            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-            color: white;
-            padding: 2rem;
+        .building-summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #173B61 0%, #17616E 50%, #FD8916 100%);
         }
 
-        .building-icon-large {
-            width: 70px;
-            height: 70px;
-            background: rgba(255,255,255,0.15);
+        .building-info {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .building-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #173B61 0%, #17616E 100%);
             border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 1.5rem;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(23, 59, 97, 0.3);
         }
 
-        .building-icon-large i {
-            font-size: 28px;
+        .building-icon i {
+            font-size: 22px;
             color: white;
         }
 
-        .building-title {
-            font-size: 1.75rem;
+        .building-name {
+            font-size: 1.3rem;
             font-weight: 700;
-            margin: 0;
-            color: white;
+            color: #173B61;
+            margin: 0 0 0.5rem 0;
         }
 
         .building-address {
-            margin: 0;
-            opacity: 0.8;
-            font-size: 1.1rem;
+            color: #7697A0;
+            margin: 0 0 0.75rem 0;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
-        /* Status badge */
         .status-badge {
             display: inline-flex;
             align-items: center;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 25px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .status-success {
-            background: rgba(72, 187, 120, 0.1);
-            color: #2f855a;
-            border: 2px solid rgba(72, 187, 120, 0.2);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+            color: #065f46;
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
         .status-warning {
-            background: rgba(237, 137, 54, 0.1);
-            color: #c05621;
-            border: 2px solid rgba(237, 137, 54, 0.2);
+            background: linear-gradient(135deg, rgba(253, 137, 22, 0.2), rgba(253, 137, 22, 0.1));
+            color: #92400e;
+            border: 1px solid rgba(253, 137, 22, 0.3);
         }
 
-        /* Section statistiques */
-        .stats-container {
-            padding: 2rem;
-            background: #f7fafc;
-            border-bottom: 1px solid #e2e8f0;
+        /* Statistiques compactes améliorées */
+        .stats-compact {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
+        .stat-item {
             text-align: center;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-
-        .stat-icon-container {
-            width: 60px;
-            height: 60px;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #FFEBD0, #FFF8E1);
             border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 24px;
+            cursor: pointer;
+            position: relative;
         }
 
-        .stat-primary .stat-icon-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .stat-item[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #173B61;
             color: white;
-        }
-
-        .stat-success .stat-icon-container {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-        }
-
-        .stat-info .stat-icon-container {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .stat-warning .stat-icon-container {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 1000;
         }
 
         .stat-number {
-            font-size: 2rem;
+            display: block;
+            font-size: 1.6rem;
             font-weight: 800;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
+            color: #173B61;
+            margin-bottom: 0.25rem;
         }
 
         .stat-label {
-            color: #718096;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
+            color: #7697A0;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin: 0;
+            letter-spacing: 0.5px;
         }
 
-        /* Section blocs */
-        .blocs-container {
+        /* Actions rapides améliorées */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.25rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #173B61;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(23, 59, 97, 0.05), rgba(23, 97, 110, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .action-btn:hover::before {
+            opacity: 1;
+        }
+
+        .action-btn:hover {
+            background: white;
+            border-color: #173B61;
+            color: #173B61;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .action-icon-wrapper {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #FFEBD0, #FFF8E1);
+            margin-bottom: 0.75rem;
+            transition: transform 0.3s ease;
+        }
+
+        .action-btn:hover .action-icon-wrapper {
+            transform: scale(1.1);
+        }
+
+        .action-btn i {
+            font-size: 1.2rem;
+        }
+
+        .action-btn span {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Section blocs améliorée */
+        .blocs-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blocs-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #173B61 0%, #17616E 50%, #FD8916 100%);
         }
 
         .section-header {
@@ -570,125 +717,164 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
         }
 
         .section-title {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            color: #2d3748;
+            color: #173B61;
             margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .text-primary {
+            color: #FD8916 !important;
         }
 
         .blocs-count {
-            background: #edf2f7;
-            color: #4a5568;
-            padding: 6px 12px;
+            background: linear-gradient(135deg, #FFEBD0, #FFF8E1);
+            color: #173B61;
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid rgba(253, 137, 22, 0.2);
         }
 
-        /* Grid des blocs */
-        .blocs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
+        /* Liste des blocs améliorée */
+        .blocs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        .bloc-card {
-            background: white;
+        .bloc-item {
+            display: flex;
+            align-items: center;
+            padding: 1.75rem;
+            background: linear-gradient(135deg, #fafbfc, #f8fafc);
             border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .bloc-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        .bloc-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, #173B61, #17616E);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
         }
 
-        .bloc-header {
+        .bloc-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .bloc-item:hover {
+            background: white;
+            border-color: #173B61;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .bloc-main-info {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .bloc-name {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: #2d3748;
-            margin: 0;
+            flex: 1;
         }
 
         .bloc-badge {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #173B61 0%, #17616E 100%);
+            color: white;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            color: white;
-            font-size: 0.875rem;
+            margin-right: 1rem;
+            box-shadow: 0 4px 15px rgba(23, 59, 97, 0.3);
+            font-size: 1.1rem;
         }
 
-        .bloc-badge-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .bloc-badge-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-        .bloc-badge-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-        .bloc-badge-warning { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-        .bloc-badge-danger { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-        .bloc-badge-purple { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .bloc-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #173B61;
+            margin: 0 0 0.5rem 0;
+        }
 
         .bloc-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
         }
 
-        .bloc-stat-item {
-            text-align: center;
-            padding: 1rem 0.5rem;
-            background: #f7fafc;
-            border-radius: 10px;
-        }
-
-        .stat-value {
-            display: block;
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #2d3748;
-        }
-
-        .stat-text {
-            display: block;
-            font-size: 0.75rem;
-            color: #718096;
+        .stat-chip {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(23, 59, 97, 0.1);
+            color: #173B61;
+            padding: 4px 10px;
+            border-radius: 12px;
             font-weight: 600;
-            text-transform: uppercase;
-            margin-top: 0.25rem;
+            font-size: 0.8rem;
+        }
+
+        .bloc-status {
+            margin-right: 1rem;
         }
 
         .generation-status {
-            text-align: center;
-            padding: 0.75rem;
-            border-radius: 10px;
-            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
         }
 
         .generation-status.generated {
-            background: rgba(72, 187, 120, 0.1);
-            color: #2f855a;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.1));
+            color: #065f46;
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
         .generation-status.pending {
-            background: rgba(237, 137, 54, 0.1);
-            color: #c05621;
+            background: linear-gradient(135deg, rgba(253, 137, 22, 0.15), rgba(253, 137, 22, 0.1));
+            color: #92400e;
+            border: 1px solid rgba(253, 137, 22, 0.3);
+        }
+
+        .status-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .generated .status-icon {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .pending .status-icon {
+            background: rgba(253, 137, 22, 0.2);
         }
 
         .bloc-actions {
@@ -696,127 +882,348 @@
             gap: 0.5rem;
         }
 
-        .bloc-actions .btn {
-            flex: 1;
+        /* Petits boutons améliorés */
+        .btn-outline-sm, .btn-success-sm, .btn-warning-sm {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* États vides */
+        .btn-outline-sm::before, .btn-success-sm::before, .btn-warning-sm::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .btn-outline-sm:hover::before, .btn-success-sm:hover::before, .btn-warning-sm:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .btn-outline-sm {
+            background: white;
+            color: #173B61;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-outline-sm:hover {
+            background: #173B61;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(23, 59, 97, 0.3);
+        }
+
+        .btn-success-sm {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success-sm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-warning-sm {
+            background: linear-gradient(135deg, #FD8916 0%, #FF9933 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(253, 137, 22, 0.3);
+        }
+
+        .btn-warning-sm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 137, 22, 0.4);
+        }
+
+        /* Tooltips */
+        [data-tooltip] {
+            position: relative;
+        }
+
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #173B61;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        [data-tooltip]:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #173B61;
+            z-index: 1000;
+        }
+
+        /* États vides améliorés */
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
         }
 
         .empty-icon {
-            width: 80px;
-            height: 80px;
-            background: #edf2f7;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #FFEBD0, #FFF8E1);
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .empty-icon i {
-            font-size: 2rem;
-            color: #a0aec0;
+            font-size: 1.8rem;
+            color: #7697A0;
         }
 
         .empty-title {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
+            color: #173B61;
+            margin-bottom: 0.75rem;
         }
 
         .empty-description {
-            color: #718096;
-            margin-bottom: 1.5rem;
+            color: #7697A0;
+            margin-bottom: 2rem;
+            font-weight: 500;
         }
 
         .empty-state-large {
             text-align: center;
             padding: 4rem 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .empty-icon-large {
-            width: 120px;
-            height: 120px;
-            background: #edf2f7;
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #FFEBD0, #FFF8E1);
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 2rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
 
         .empty-icon-large i {
-            font-size: 3rem;
-            color: #a0aec0;
+            font-size: 2.5rem;
+            color: #7697A0;
         }
 
         .empty-title-large {
             font-size: 1.75rem;
             font-weight: 700;
-            color: #2d3748;
+            color: #173B61;
             margin-bottom: 1rem;
         }
 
         .empty-description-large {
-            color: #718096;
+            color: #7697A0;
+            margin-bottom: 2.5rem;
             font-size: 1.1rem;
-            margin-bottom: 2rem;
+            font-weight: 500;
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        /* Footer */
-        .card-footer-modern {
-            padding: 1.5rem 2rem;
-            background: #f7fafc;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-modern {
-                padding: 1.5rem;
-            }
-            
-            .header-title {
-                font-size: 1.5rem;
-            }
-
-            .stats-container {
-                padding: 1.5rem;
-            }
-
-            .blocs-container {
-                padding: 1.5rem;
-            }
-
-            .card-footer-modern {
-                padding: 1.5rem;
-            }
-
-            .card-footer-modern .d-flex {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .blocs-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .bloc-stats {
+        /* Responsive amélioré */
+        @media (max-width: 991px) {
+            .stats-compact {
                 grid-template-columns: 1fr;
                 gap: 0.75rem;
             }
-
-            .bloc-actions {
-                flex-direction: column;
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
             }
+            
+            .bloc-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+            
+            .bloc-main-info {
+                justify-content: flex-start;
+            }
+            
+            .bloc-status {
+                margin-right: 0;
+                text-align: center;
+            }
+            
+            .bloc-actions {
+                justify-content: center;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .building-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .building-icon {
+                margin: 0 auto 1rem auto;
+            }
+            
+            .bloc-stats {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .stats-compact {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+            }
+
+            .stat-item {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 1.4rem;
+            }
+
+            .building-summary-card, .blocs-section {
+                padding: 1.5rem;
+            }
+
+            .empty-state-large {
+                padding: 3rem 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Améliorations supplémentaires */
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Effet de shimmer pour les éléments en chargement */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        /* Amélioration de l'accessibilité */
+        .btn:focus, .action-btn:focus {
+            outline: 2px solid #FD8916;
+            outline-offset: 2px;
+        }
+
+        /* Effet de gradient sur les bordures */
+        .gradient-border {
+            position: relative;
+            background: white;
+            border-radius: 15px;
+        }
+
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 15px;
+            padding: 2px;
+            background: linear-gradient(135deg, #173B61, #17616E, #FD8916);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+        }
+
+        /* Animation de loading pour les boutons */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Amélioration des transitions de page */
+        .page-transition {
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Effet de parallaxe subtile */
+        .parallax-element {
+            transform: translateZ(0);
+            will-change: transform;
         }
     </style>
 @endsection

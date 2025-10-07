@@ -8,57 +8,61 @@ use Carbon\Carbon;
 class Abonnement extends Model
 {
     protected $fillable = [
-        'promoteur_id', 'type_abonnement', 'montant', 
-        'date_debut', 'date_fin', 'statut'
+        'promoteur_id',
+        'type_abonnement',
+        'montant',
+        'date_debut',
+        'date_fin',
+        'statut',
+        'nombre_immeubles_max',
+        'immeuble_id',
+        'payment_ref',
+        'payment_url',
+        'payment_completed_at'
     ];
 
     protected $casts = [
         'date_debut' => 'date',
         'date_fin' => 'date',
         'montant' => 'decimal:2',
+        'payment_completed_at' => 'datetime'
     ];
 
-    // ========== RELATIONS ==========
-    
+    // Relations
     public function promoteur()
     {
         return $this->belongsTo(Promoteur::class);
     }
 
-    // Un abonnement peut couvrir plusieurs immeubles
-    public function immeubles()
+    public function prixAbonnement()
     {
-        return $this->hasMany(Immeuble::class);
+        return $this->belongsTo(PrixAbonnement::class, 'type_abonnement', 'type_abonnement');
     }
 
-    // ========== MÉTHODES MÉTIER ==========
-    
+    // Méthodes utiles
     public function isActive()
     {
-        return $this->statut === 'actif' && 
-               $this->date_debut <= now() && 
-               $this->date_fin >= now();
+        return $this->statut === 'actif' && $this->date_fin >= now();
     }
 
-    public function isExpired()
+    public function isPaid()
     {
-        return $this->date_fin < now();
+        return $this->statut === 'actif' && $this->payment_completed_at !== null;
     }
 
-    public function getDaysRemainingAttribute()
+    public function getStatusBadgeAttribute()
     {
-        if ($this->isExpired()) {
-            return 0;
+        switch ($this->statut) {
+            case 'actif':
+                return '<span class="badge bg-success">Actif</span>';
+            case 'en_attente':
+                return '<span class="badge bg-warning">En attente</span>';
+            case 'echec':
+                return '<span class="badge bg-danger">Échec</span>';
+            case 'expire':
+                return '<span class="badge bg-secondary">Expiré</span>';
+            default:
+                return '<span class="badge bg-light">Inconnu</span>';
         }
-        return now()->diffInDays($this->date_fin);
-    }
-
-    // Marquer comme expiré et suspendre tous les utilisateurs
-    public function expire()
-    {
-        $this->update(['statut' => 'expire']);
-        
-        // Suspendre le promoteur
-        $this->promoteur->suspendAll();
     }
 }

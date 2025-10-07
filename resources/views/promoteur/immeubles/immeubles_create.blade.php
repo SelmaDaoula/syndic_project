@@ -227,8 +227,44 @@
 
     @push('styles')
         <style>
+            /* Nouvelle palette de couleurs appliquée */
+            :root {
+                --primary: #173B61;
+                --primary-light: #7697A0;
+                --accent: #FD8916;
+                --accent-light: #FFEBD0;
+                --info: #87ABF1;
+                --success: #10b981;
+                --warning: #FD8916;
+                --danger: #F0050F;
+            }
+
+            body {
+                background-color: var(--accent-light);
+            }
+
+            .bg-primary {
+                background: linear-gradient(135deg, var(--primary) 0%, #17616E 100%) !important;
+            }
+
+            .text-primary {
+                color: var(--primary) !important;
+            }
+
+            .text-info {
+                color: var(--info) !important;
+            }
+
+            .text-warning {
+                color: var(--accent) !important;
+            }
+
+            .text-secondary {
+                color: var(--primary-light) !important;
+            }
+
             .bg-light-success {
-                background-color: #d1e7dd !important;
+                background: linear-gradient(135deg, #d1f2e8 0%, var(--accent-light) 100%) !important;
             }
 
             .border-4 {
@@ -236,13 +272,110 @@
             }
 
             .form-control:focus {
-                border-color: #0d6efd;
-                box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+                border-color: var(--primary);
+                box-shadow: 0 0 0 0.2rem rgba(23, 59, 97, 0.25);
+            }
+
+            .form-select:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 0.2rem rgba(23, 59, 97, 0.25);
             }
 
             .alert-info {
-                background-color: #e7f3ff;
-                border-color: #b6d7ff;
+                background: linear-gradient(135deg, #e7f3ff 0%, var(--accent-light) 100%);
+                border-color: var(--info);
+                color: var(--primary);
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, var(--accent) 0%, #FF9933 100%);
+                border: none;
+                color: white;
+                transition: all 0.3s ease;
+            }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #e07a14 0%, var(--accent) 100%);
+                transform: translateY(-1px);
+                box-shadow: 0 5px 15px rgba(253, 137, 22, 0.4);
+                color: white;
+            }
+
+            .btn-outline-secondary {
+                border-color: var(--primary-light);
+                color: var(--primary);
+            }
+
+            .btn-outline-secondary:hover {
+                background-color: var(--primary-light);
+                border-color: var(--primary-light);
+                color: white;
+            }
+
+            .btn-outline-warning {
+                border-color: var(--accent);
+                color: var(--accent);
+            }
+
+            .btn-outline-warning:hover {
+                background-color: var(--accent);
+                border-color: var(--accent);
+                color: white;
+            }
+
+            .card {
+                border: 1px solid #e2e8f0;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            }
+
+            .card-header {
+                border-bottom: 1px solid rgba(255,255,255,0.2);
+            }
+
+            .badge.bg-success {
+                background: linear-gradient(135deg, var(--success) 0%, #34d399 100%) !important;
+            }
+
+            .badge.bg-secondary {
+                background: linear-gradient(135deg, var(--primary-light) 0%, var(--info) 100%) !important;
+            }
+
+            .alert-danger {
+                background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+                border-color: var(--danger);
+                color: #7f1d1d;
+            }
+
+            .input-group-text {
+                background-color: var(--accent-light);
+                border-color: #dee2e6;
+                color: var(--primary);
+                font-weight: 500;
+            }
+
+            .form-label {
+                color: var(--primary);
+                font-weight: 600;
+            }
+
+            .border-success {
+                border-color: var(--success) !important;
+            }
+
+            .text-success {
+                color: var(--success) !important;
+            }
+
+            .text-danger {
+                color: var(--danger) !important;
+            }
+
+            .border-primary {
+                border-color: var(--primary) !important;
+            }
+
+            .btn-close:focus {
+                box-shadow: 0 0 0 0.25rem rgba(253, 137, 22, 0.25);
             }
         </style>
     @endpush
@@ -279,11 +412,13 @@
 
                 // Animation de soumission
                 const form = document.getElementById('immeubleForm');
-                form.addEventListener('submit', function () {
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Création en cours...';
-                    submitBtn.disabled = true;
-                });
+                if (form) {
+                    form.addEventListener('submit', function () {
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Création en cours...';
+                        submitBtn.disabled = true;
+                    });
+                }
             });
         </script>
     @endpush

@@ -1,7 +1,6 @@
-{{-- resources/views/promoteur/rapports-financier.blade.php --}}
 @extends('layouts.app')
-@section('title', 'Rapport Financier')
+@section('title', 'Rapports')
 @section('content')
-<h1>Rapport Financier</h1>
-<p>Analyse financière détaillée</p>
+<h1>Rapports</h1>
+<p>Vue d'ensemble des rapports financier </p>
 @endsection

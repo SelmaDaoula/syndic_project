@@ -31,11 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'konnect' => [
-    'api_key' => env('KONNECT_API_KEY'),
-    'receiver_wallet_id' => env('KONNECT_RECEIVER_WALLET_ID'),
-    'base_url' => env('KONNECT_BASE_URL', 'https://api.konnect.network'),
-    'webhook_url' => env('KONNECT_WEBHOOK_URL'),
-    ],
+  /*  'konnect' => [
+        'api_key' => env('KONNECT_API_KEY'),
+        'receiver_wallet_id' => env('KONNECT_RECEIVER_WALLET_ID'),
+        'base_url' => env('KONNECT_BASE_URL', 'https://gateway.sandbox.konnect.network/me/68c92779e929f8224c6b31c8'),
+        'webhook_url' => env('KONNECT_WEBHOOK_URL'),
+    ],*/
 
 ];

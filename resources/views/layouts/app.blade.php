@@ -5,71 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
-    <title>@yield('title', 'Dashboard') - Plateforme Syndic</title>
+    <title>@yield('title', 'Dashboard') - SmartSyndic</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
+            /* Palette simplifiée et professionnelle */
+            --primary: #173B61;               /* Bleu principal pour sidebar */
+            --primary-light: #7697A0;         /* Bleu-gris pour textes secondaires */
+            --accent: #FD8916;                /* Orange pour actions importantes */
+            
+            /* Couleurs neutres dominantes */
+            --white: #ffffff;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f4;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            
+            /* Couleurs fonctionnelles */
+            --success: #10b981;
+            --danger: #F0050F;
+            --warning: var(--accent);
+            --info: var(--primary-light);
+            
+            /* Variables sidebar */
             --sidebar-width: 280px;
             --sidebar-collapsed-width: 70px;
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --sidebar-bg: #2c3e50;
-            --sidebar-hover: #34495e;
-            --text-light: #ecf0f1;
-            --border-color: #e9ecef;
+            
+            /* Ombres simples */
+            --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+            
+            /* Rayons */
+            --border-radius: 0.375rem;
+            --border-radius-lg: 0.5rem;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
             margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--gray-50);
             overflow-x: hidden;
         }
 
-        /* Sidebar avec extension automatique */
+        /* Sidebar simple */
         .sidebar {
             position: fixed;
             top: 0;
             left: 0;
             height: 100vh;
             width: var(--sidebar-collapsed-width);
-            background: linear-gradient(135deg, var(--sidebar-bg) 0%, #34495e 100%);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background: var(--primary);
+            transition: all 0.3s ease;
             z-index: 1000;
             overflow: hidden;
+            box-shadow: var(--shadow-lg);
         }
 
         .sidebar:hover {
             width: var(--sidebar-width);
             overflow-y: auto;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
         }
 
-        .sidebar.collapsed {
-            width: var(--sidebar-collapsed-width);
-        }
-
+        /* Header sidebar */
         .sidebar-header {
             padding: 1.5rem;
-            background: rgba(0,0,0,0.1);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
             text-align: center;
         }
 
         .sidebar-header .logo {
-            color: var(--text-light);
-            font-size: 1.5rem;
-            font-weight: bold;
+            color: var(--white);
+            font-size: 1.4rem;
+            font-weight: 700;
             text-decoration: none;
             display: block;
             white-space: nowrap;
             overflow: hidden;
-            transition: opacity 0.3s ease;
+            transition: all 0.3s ease;
+        }
+
+        /* CSS pour le logo dans la sidebar */
+        .sidebar .logo-img {
+            width: 160px;
+            height: 160px;
+            object-fit: contain;
+            filter: brightness(0) invert(1); /* Logo blanc pour contraster avec le fond bleu */
+            transition: all 0.3s ease;
+        }
+
+        /* Si votre logo est déjà blanc/clair, ajoutez la classe "colored" à l'img */
+        .sidebar .logo-img.colored {
+            filter: none;
+        }
+
+        /* Animation au hover de la sidebar */
+        .sidebar:hover .logo-img {
+            transform: scale(1.05);
         }
 
         .sidebar:not(:hover) .sidebar-header .logo span,
@@ -85,13 +134,15 @@
         }
 
         .sidebar-header .user-info {
-            margin-top: 1rem;
-            color: var(--text-light);
+            margin-top: 0.2rem;
+            color: var(--white);
+            opacity: 0.9;
         }
 
         .sidebar-header .user-name {
-            font-weight: 600;
+            font-weight: 800;
             font-size: 0.9rem;
+            color: var(--accent);
         }
 
         .sidebar-header .user-role {
@@ -100,7 +151,7 @@
             margin-top: 0.25rem;
         }
 
-        /* Menu Navigation */
+        /* Navigation */
         .sidebar-nav {
             padding: 1rem 0;
         }
@@ -112,8 +163,8 @@
         .nav-link {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.5rem;
-            color: var(--text-light);
+            padding: 0.875rem 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
             transition: all 0.3s ease;
             border: none;
@@ -125,6 +176,7 @@
         .nav-link .nav-text {
             opacity: 0;
             transition: opacity 0.2s ease;
+            font-weight: 500;
         }
 
         .sidebar:hover .nav-link .nav-text {
@@ -133,42 +185,57 @@
         }
 
         .nav-link:hover {
-            background-color: var(--sidebar-hover);
-            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
             padding-left: 2rem;
         }
 
         .nav-link.active {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: #fff;
+            background-color: rgba(255, 255, 255, 0.15);
+            color: var(--white);
             border-radius: 0 25px 25px 0;
             margin-right: 1rem;
+            font-weight: 600;
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--white);
         }
 
         .nav-link i {
             width: 20px;
             margin-right: 1rem;
             text-align: center;
+            font-size: 1rem;
         }
 
+        /* Badges simples */
         .nav-badge {
-            background: #e74c3c;
-            color: white;
+            color: var(--white);
             font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 10px;
+            font-weight: 600;
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
             margin-left: auto;
         }
 
-        .nav-badge.warning { background: #f39c12; }
-        .nav-badge.info { background: #3498db; }
-        .nav-badge.primary { background: var(--primary-color); }
+        .nav-badge.danger { background-color: var(--danger); }
+        .nav-badge.warning { background-color: var(--warning); color: var(--white); }
+        .nav-badge.info { background-color: var(--info); color: var(--white); }
+        .nav-badge.success { background-color: var(--success); }
+        .nav-badge.primary { background-color: var(--white); color: var(--primary); }
 
         /* Submenu */
         .submenu {
             display: none;
-            background: rgba(0,0,0,0.2);
-            border-left: 3px solid var(--primary-color);
+            background: rgba(0, 0, 0, 0.15);
+            border-left: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .submenu.show {
@@ -178,33 +245,37 @@
         .submenu .nav-link {
             padding-left: 3rem;
             font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
         }
 
-        /* Main Content - ajusté pour sidebar réduite par défaut */
+        /* Main content */
         .main-content {
             margin-left: var(--sidebar-collapsed-width);
             min-height: 100vh;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.3s ease;
+            background-color: var(--gray-50);
         }
 
-        /* Suppression des classes expanded et collapsed */
-
-        /* Top Bar */
+        /* Top bar simple */
         .top-bar {
-            background: white;
-            border-bottom: 1px solid var(--border-color);
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .breadcrumb-nav {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #6c757d;
+            color: var(--gray-600);
+            font-weight: 500;
         }
 
         .top-actions {
@@ -213,36 +284,108 @@
             gap: 1rem;
         }
 
+        /* Notification simple */
         .notification-bell {
             position: relative;
-            color: #6c757d;
-            font-size: 1.2rem;
+            color: var(--gray-600);
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition: all 0.2s ease;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
         }
 
         .notification-bell:hover {
-            color: var(--primary-color);
+            color: var(--primary);
+            background-color: var(--gray-100);
         }
 
         .notification-count {
             position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #e74c3c;
-            color: white;
+            top: 0.3rem;
+            right: 0.3rem;
+            background: var(--danger);
+            color: var(--white);
             border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.7rem;
+            width: 16px;
+            height: 16px;
+            font-size: 0.65rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Content Area */
+        /* Dropdown simple */
+        .dropdown-toggle::after {
+            display: none;
+        }
+
+        .dropdown-toggle {
+            border: 1px solid var(--gray-300);
+            border-radius: 50%;
+            padding: 0;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-toggle:hover {
+            border-color: var(--primary);
+        }
+
+        .dropdown-menu {
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-item {
+            border-radius: var(--border-radius);
+            padding: 0.7rem 1rem;
+            transition: all 0.15s ease-in-out;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        .dropdown-item i {
+            width: 18px;
+            text-align: center;
+        }
+
+        /* Content area */
         .content-area {
             padding: 2rem;
+        }
+
+        /* Divider */
+        .nav-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.15);
+            margin: 1rem 1.5rem;
+        }
+
+        /* Mobile toggle */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+        }
+
+        .mobile-toggle:hover {
+            background-color: var(--gray-100);
+            color: var(--primary);
         }
 
         /* Responsive */
@@ -262,30 +405,46 @@
             .mobile-toggle {
                 display: block !important;
             }
+
+            .top-bar {
+                padding: 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+
+            .sidebar .logo-img {
+                width: 80px;
+                height: 80px;
+            }
         }
 
-        .mobile-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: #6c757d;
-            cursor: pointer;
+        /* Scrollbar simple */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
         }
 
-        /* Animations */
-        .nav-link, .submenu {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Divider */
-        .nav-divider {
-            height: 1px;
-            background: rgba(255,255,255,0.1);
-            margin: 1rem 1.5rem;
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
         }
 
-        /* Suppression du CSS du toggle button - plus nécessaire */
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Animations simples */
+        .nav-link, 
+        .submenu,
+        .notification-bell,
+        .dropdown-toggle {
+            transition: all 0.2s ease;
+        }
     </style>
     
     @stack('styles')
@@ -296,8 +455,8 @@
         <!-- Header -->
         <div class="sidebar-header">
             <a href="{{ route('dashboard') }}" class="logo">
-                <i class="fas fa-building"></i>
-                <span class="ms-2">SyndicPro</span>
+                <img src="{{ asset('images/logo.png') }}" alt="SmartSyndic" class="logo-img colored">
+              <!--  <span class="ms-2">SmartSyndic</span> -->
             </a>
             
             <div class="user-info">
@@ -305,8 +464,6 @@
                 <div class="user-role">{{ App\Services\MenuService::getRoleDisplayName(auth()->user()->role_id) }}</div>
             </div>
         </div>
-
-        <!-- Toggle Button supprimé -->
 
         <!-- Navigation -->
         <nav class="sidebar-nav">
@@ -371,13 +528,21 @@
                 
                 <!-- Profil dropdown -->
                 <div class="dropdown">
-                    <button class="btn btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <button class="btn btn-link dropdown-toggle p-0" type="button" data-bs-toggle="dropdown">
                         <img src="{{ auth()->user()->avatar ?? '/images/default-avatar.png' }}" 
-                             class="rounded-circle" width="32" height="32" alt="Avatar">
+                             class="rounded-circle" width="36" height="36" alt="Avatar">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ route('profile.show') }}">Mon Profil</a></li>
-                        <li><a class="dropdown-item" href="{{ route('settings.index') }}">Paramètres</a></li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('profile.show') }}">
+                                <i class="fas fa-user me-2"></i>Mon Profil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('settings.index') }}">
+                                <i class="fas fa-cog me-2"></i>Paramètres
+                            </a>
+                        </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form action="{{ route('user.logout') }}" method="POST" class="d-inline">
@@ -406,9 +571,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Supprimer les fonctions de toggle - menu auto-extensible
-        
-        // Toggle submenu (gardé)
+        // Toggle submenu
         function toggleSubmenu(element) {
             event.preventDefault();
             const submenu = element.nextElementSibling;
@@ -416,29 +579,36 @@
             
             if (submenu) {
                 submenu.classList.toggle('show');
-                arrow.style.transform = submenu.classList.contains('show') 
-                    ? 'rotate(180deg)' 
-                    : 'rotate(0deg)';
+                if (arrow) {
+                    arrow.style.transform = submenu.classList.contains('show') 
+                        ? 'rotate(180deg)' 
+                        : 'rotate(0deg)';
+                }
             }
         }
 
-        // Show notifications (placeholder)
-        function showNotifications() {
-            alert('Fonctionnalité notifications à implémenter');
+        // Toggle sidebar mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
         }
 
-        // Responsive : menu overlay sur mobile
-        if (window.innerWidth <= 768) {
-            document.querySelector('.sidebar').addEventListener('mouseenter', function() {
-                this.style.position = 'fixed';
-                this.style.zIndex = '1050';
-            });
-            
-            document.querySelector('.sidebar').addEventListener('mouseleave', function() {
-                this.style.position = 'fixed';
-                this.style.zIndex = '1000';
-            });
+        // Show notifications
+        function showNotifications() {
+            console.log('Notifications à implémenter');
         }
+
+        // Close sidebar on mobile when clicking outside
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const mobileToggle = document.querySelector('.mobile-toggle');
+                
+                if (!sidebar.contains(event.target) && !mobileToggle.contains(event.target)) {
+                    sidebar.classList.remove('show');
+                }
+            }
+        });
     </script>
     
     @stack('scripts')

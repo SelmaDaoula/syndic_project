@@ -12,7 +12,7 @@ class MenuService
     public static function getMenuItems()
     {
         $user = Auth::user();
-        
+
         if (!$user) {
             return [];
         }
@@ -56,7 +56,7 @@ class MenuService
     }
 
     /**
-     * Menu du promoteur (fonctionnalité complète)
+     * Menu du promoteur
      */
     private static function getPromoteurMenu()
     {
@@ -154,24 +154,88 @@ class MenuService
                 'badge' => null
             ],
             [
+                'title' => 'Appartements',
+                'route' => 'syndic.appartements.index',
+                'icon' => 'fas fa-door-open',
+                'active' => request()->routeIs('syndic.appartements.*'),
+                'badge' => null
+            ],
+            [
                 'title' => 'Résidents',
                 'route' => 'syndic.residents.index',
                 'icon' => 'fas fa-users',
-                'active' => request()->routeIs('syndic.residents.*'),
-                'badge' => null
+                'active' => request()->routeIs('syndic.residents.*') || request()->routeIs('syndic.proprietaires.*') || request()->routeIs('syndic.locataires.*'),
+                'badge' => null,
+                'submenu' => [
+                    [
+                        'title' => 'Propriétaires',
+                        'route' => 'syndic.proprietaires.index',
+                        'icon' => 'fas fa-user-tie'
+                    ],
+                    [
+                        'title' => 'Locataires',
+                        'route' => 'syndic.locataires.index',
+                        'icon' => 'fas fa-user'
+                    ]
+                ]
             ],
             [
                 'title' => 'Tickets',
                 'route' => 'syndic.tickets.index',
                 'icon' => 'fas fa-ticket-alt',
                 'active' => request()->routeIs('syndic.tickets.*'),
-                'badge' => self::getTicketsBadge()
+                'badge' => self::getTicketsBadge(),
+                'submenu' => [
+                    [
+                        'title' => 'Tous les tickets',
+                        'route' => 'syndic.tickets.index',
+                        'icon' => 'fas fa-list'
+                    ],
+                    [
+                        'title' => 'Créer un ticket',
+                        'route' => 'syndic.tickets.create',
+                        'icon' => 'fas fa-plus'
+                    ]
+                ]
             ],
             [
-                'title' => 'Charges',
-                'route' => 'syndic.charges.index',
-                'icon' => 'fas fa-euro-sign',
-                'active' => request()->routeIs('syndic.charges.*'),
+                'title' => 'Paiements',
+                'route' => 'syndic.paiements.index',
+                'icon' => 'fas fa-credit-card',
+                'active' => request()->routeIs('syndic.paiements.*'),
+                'badge' => null
+            ],
+            [
+                'title' => 'Dépenses',
+                'route' => 'syndic.depenses.index',
+                'icon' => 'fas fa-receipt',
+                'active' => request()->routeIs('syndic.depenses.*'),
+                'badge' => null,
+                'submenu' => [
+                    [
+                        'title' => 'Liste des dépenses',
+                        'route' => 'syndic.depenses.index',
+                        'icon' => 'fas fa-list'
+                    ],
+                    [
+                        'title' => 'Nouvelle dépense',
+                        'route' => 'syndic.depenses.create',
+                        'icon' => 'fas fa-plus'
+                    ]
+                ]
+            ],
+            [
+                'title' => 'Techniciens',
+                'route' => 'syndic.techniciens.index',
+                'icon' => 'fas fa-tools',
+                'active' => request()->routeIs('syndic.techniciens.*'),
+                'badge' => null
+            ],
+            [
+                'title' => 'Rapports',
+                'route' => 'syndic.rapports.index',
+                'icon' => 'fas fa-chart-line',
+                'active' => request()->routeIs('syndic.rapports.*'),
                 'badge' => null
             ]
         ];
@@ -291,7 +355,7 @@ class MenuService
      */
     private static function getDashboardRoute($roleId)
     {
-        return match($roleId) {
+        return match ($roleId) {
             6 => 'promoteur.dashboard',
             7 => 'syndic.dashboard',
             3 => 'proprietaire.dashboard',
@@ -306,7 +370,6 @@ class MenuService
      */
     private static function getSubscriptionBadge()
     {
-        // TODO: Calculer depuis la base de données
         return [
             'text' => 'Expire bientôt',
             'color' => 'warning'
@@ -318,7 +381,6 @@ class MenuService
      */
     private static function getTicketsBadge()
     {
-        // TODO: Compter les tickets non résolus
         return [
             'text' => '3',
             'color' => 'danger'
@@ -327,7 +389,6 @@ class MenuService
 
     private static function getTechnicienTicketsBadge()
     {
-        // TODO: Compter les tickets assignés
         return [
             'text' => '2',
             'color' => 'primary'
@@ -339,7 +400,6 @@ class MenuService
      */
     private static function getNotificationsBadge()
     {
-        // TODO: Compter les notifications non lues
         return [
             'text' => '5',
             'color' => 'info'
@@ -351,7 +411,7 @@ class MenuService
      */
     public static function getRoleDisplayName($roleId)
     {
-        return match($roleId) {
+        return match ($roleId) {
             6 => 'Promoteur',
             7 => 'Syndic',
             3 => 'Propriétaire',

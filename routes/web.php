@@ -8,7 +8,11 @@ use App\Http\Controllers\ImmeubleController;
 use App\Http\Controllers\BlocController;
 use App\Http\Controllers\AppartementController;
 use App\Http\Controllers\AbonnementController;
-
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\EvenementController;
+use App\Http\Controllers\SyndicController;
+use App\Http\Controllers\TicketIncidentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,10 +85,40 @@ Route::get('/dashboard', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Routes pour admin et autres rôles (immeubles génériques)
+| Routes communes pour tous les utilisateurs connectés
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'check.suspension'])->group(function () {
+
+    // PROFIL - Routes unifiées pour tous les rôles
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'show'])->name('show');
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::put('/update', [ProfileController::class, 'update'])->name('update');
+        Route::put('/update-avatar', [ProfileController::class, 'updateAvatar'])->name('update.avatar');
+        Route::put('/update-password', [ProfileController::class, 'updatePassword'])->name('update.password');
+        Route::delete('/delete-avatar', [ProfileController::class, 'deleteAvatar'])->name('delete.avatar');
+    });
+
+    // NOTIFICATIONS - Communes à tous
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::post('/mark-read/{notification}', [NotificationController::class, 'markAsRead'])->name('mark.read');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('mark.all.read');
+        Route::delete('/delete/{notification}', [NotificationController::class, 'destroy'])->name('delete');
+    });
+
+    // ÉVÉNEMENTS - Communs à tous
+    Route::prefix('evenements')->name('evenements.')->group(function () {
+        Route::get('/', [EvenementController::class, 'index'])->name('index');
+        Route::get('/calendar', [EvenementController::class, 'calendar'])->name('calendar');
+        Route::post('/create', [EvenementController::class, 'store'])->name('store');
+    });
+
+    // PARAMÈTRES - Communs à tous
+    Route::get('/settings', [ProfileController::class, 'settings'])->name('settings.index');
+    Route::put('/settings', [ProfileController::class, 'updateSettings'])->name('settings.update');
+
     // Routes immeubles pour admin/syndic SEULEMENT
     Route::resource('immeubles', ImmeubleController::class)->except(['index', 'create', 'store']);
 
@@ -103,12 +137,7 @@ Route::middleware(['auth', 'check.suspension'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-// Routes Promoteur - TOUTES centralisées ici
-
-// Remplacez TOUTE la section promoteur dans votre web.php par ceci :
-
-// Remplacez votre section promoteur par ceci :
-
+// Routes Promoteur
 Route::prefix('promoteur')->name('promoteur.')->middleware(['auth', 'promoteur'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [PromoteurController::class, 'dashboard'])->name('dashboard');
@@ -125,10 +154,12 @@ Route::prefix('promoteur')->name('promoteur.')->middleware(['auth', 'promoteur']
     Route::post('/blocs/{bloc}/generate-apartments', [BlocController::class, 'generateApartments'])->name('blocs.generate');
     Route::post('/blocs/{bloc}/regenerate-apartments', [BlocController::class, 'regenerateApartments'])->name('blocs.regenerate');
 
-    // ABONNEMENTS
-    Route::get('/abonnements', [AbonnementController::class, 'index'])->name('abonnements.index');
-    Route::post('/abonnements/process', [AbonnementController::class, 'process'])->name('abonnements.process');
-    Route::get('/abonnements/historique', [AbonnementController::class, 'historique'])->name('abonnements.historique');
+    // Routes abonnements
+    Route::prefix('abonnements')->name('abonnements.')->group(function () {
+        Route::get('/', [AbonnementController::class, 'index'])->name('index');
+        Route::post('/process', [AbonnementController::class, 'process'])->name('process');
+        Route::get('/check-status/{paymentRef}', [AbonnementController::class, 'checkStatus'])->name('check.status');
+    });
 
     // Autres pages
     Route::get('/appartements', function () {
@@ -143,7 +174,7 @@ Route::prefix('promoteur')->name('promoteur.')->middleware(['auth', 'promoteur']
     Route::get('/syndics', function () {
         return view('promoteur.syndics.index');
     })->name('syndics.index');
-    Route::get('/syndics/assign', [PromoteurController::class, 'showAssignSyndic'])->name('syndics.assign');
+    Route::get('/syndics/assign', [PromoteurController::class, 'showAssignSyndic'])->name('syndics.assign.form');
     Route::post('/syndics/assign', [PromoteurController::class, 'assignSyndic'])->name('syndics.assign');
     Route::delete('/syndics/unassign', [PromoteurController::class, 'unassignSyndic'])->name('syndics.unassign');
 
@@ -162,17 +193,55 @@ Route::prefix('promoteur')->name('promoteur.')->middleware(['auth', 'promoteur']
     Route::resource('appartements', AppartementController::class);
 });
 
-// WEBHOOK KONNECT - IMPORTANT : En dehors du groupe (sans auth)
-Route::get('/promoteur/abonnements/webhook', [AbonnementController::class, 'webhook'])->name('promoteur.abonnements.webhook');
 
 
 
-// Routes Syndic
+// Routes Syndic - À ajouter dans web.php à la place de la section existante
+// Routes Syndic - Section corrigée
 Route::prefix('syndic')->name('syndic.')->middleware(['auth', 'syndic'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboards.syndic');
-    })->name('dashboard');
+
+    // Dashboard
+    Route::get('/dashboard', [SyndicController::class, 'dashboard'])->name('dashboard');
+
+    // Immeuble
+    Route::get('/immeuble', [SyndicController::class, 'showImmeuble'])->name('immeubles.show');
+
+    // Appartements
+    Route::get('/appartements', [SyndicController::class, 'appartements'])->name('appartements.index');
+    Route::get('/appartements/{appartement}', [SyndicController::class, 'showAppartement'])->name('appartements.show');
+
+    // Résidents
+    Route::get('/residents', [SyndicController::class, 'residents'])->name('residents.index');
+    Route::get('/proprietaires', [SyndicController::class, 'proprietaires'])->name('proprietaires.index');
+    Route::get('/locataires', [SyndicController::class, 'locataires'])->name('locataires.index');
+
+    // Tickets - Utilise TicketIncidentController
+    Route::controller(TicketIncidentController::class)->prefix('tickets')->name('tickets.')->group(function () {
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        Route::get('/', 'index')->name('index');
+        Route::get('/{ticket}', 'show')->name('show');
+        Route::put('/{ticket}/status', 'updateStatus')->name('status');
+        Route::post('/{ticket}/assign', 'assign')->name('assign');
+    });
+
+    // Paiements
+    Route::get('/paiements', [SyndicController::class, 'paiements'])->name('paiements.index');
+
+    // Dépenses
+    Route::get('/depenses/create', [SyndicController::class, 'createDepense'])->name('depenses.create');
+    Route::post('/depenses', [SyndicController::class, 'storeDepense'])->name('depenses.store');
+    Route::get('/depenses', [SyndicController::class, 'depenses'])->name('depenses.index');
+
+    // Techniciens
+    Route::get('/techniciens', [SyndicController::class, 'techniciens'])->name('techniciens.index');
+
+    // Rapports
+    Route::get('/rapports', [SyndicController::class, 'rapports'])->name('rapports.index');
 });
+
+// N'oubliez pas d'ajouter l'import du contrôleur en haut du fichier web.php
+// use App\Http\Controllers\SyndicController;
 
 // Routes Propriétaire
 Route::prefix('proprietaire')->name('proprietaire.')->middleware(['auth', 'proprietaire'])->group(function () {
@@ -195,6 +264,9 @@ Route::prefix('technicien')->name('technicien.')->middleware(['auth', 'technicie
     })->name('dashboard');
 });
 
+// WEBHOOK KONNECT - En dehors du groupe (sans auth)
+Route::post('/webhook/konnect', [AbonnementController::class, 'webhook'])->name('webhook.konnect');
+
 /*
 |--------------------------------------------------------------------------
 | Redirections de compatibilité
@@ -204,28 +276,10 @@ Route::get('/login', function () {
     return redirect()->route('user.login');
 });
 
-// Routes communes
-Route::middleware('auth')->group(function () {
-    Route::get('/notifications', function () {
-        return view('notifications.index');
-    })->name('notifications.index');
-
-    Route::get('/evenements', function () {
-        return view('evenements.index');
-    })->name('evenements.index');
-
-    Route::get('/profile', function () {
-        return view('profile.show');
-    })->name('profile.show');
-
-    Route::get('/settings', function () {
-        return view('settings.index');
-    })->name('settings.index');
-});
-
 // Route de test
 Route::get('/test', function () {
     $user = auth()->user();
     return $user ? "Connecté: {$user->name} (Rôle: {$user->role_id})" : "Non connecté";
 })->middleware('auth');
+
 ?>

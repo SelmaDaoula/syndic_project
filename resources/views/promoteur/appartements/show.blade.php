@@ -1,245 +1,780 @@
 @extends('layouts.app')
 
-@section('title', 'Détail Appartement')
+@section('title', 'Détails du ticket #' . $ticket->numero_ticket)
 
 @section('content')
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center bg-white p-4 rounded shadow-sm">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-door-open text-primary fs-2 me-3"></i>
-                    <div>
-                        <h1 class="h3 mb-1">Appartement N° {{ $appartement->numero }}</h1>
-                        <p class="text-muted mb-0">{{ $appartement->bloc->immeuble->nom }} - {{ $appartement->bloc->nom }}</p>
-                    </div>
-                </div>
-                <div class="d-flex gap-2">
-                    <a href="{{ route('promoteur.appartements.edit', $appartement->id) }}" class="btn btn-warning">
-                        <i class="fas fa-edit me-2"></i>Modifier
-                    </a>
-                    <a href="{{ route('promoteur.appartements.index', ['bloc_id' => $appartement->bloc_id]) }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Retour
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Flash Messages -->
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>{{ $errors->first() }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    <div class="row">
-        <!-- Informations principales -->
-        <div class="col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Informations de l'appartement
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-primary bg-opacity-10 p-3 rounded-3 me-3">
-                                    <i class="fas fa-hashtag text-primary fs-4"></i>
-                                </div>
-                                <div>
-                                    <p class="small text-muted mb-0">Numéro</p>
-                                    <p class="h4 mb-0">{{ $appartement->numero }}</p>
-                                </div>
+    <div class="container-fluid px-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="header-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="header-icon">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h1 class="page-title">Ticket #{{ $ticket->numero_ticket }}</h1>
+                                <p class="page-subtitle">{{ $ticket->titre }}</p>
                             </div>
                         </div>
-
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-success bg-opacity-10 p-3 rounded-3 me-3">
-                                    <i class="fas fa-home text-success fs-4"></i>
-                                </div>
-                                <div>
-                                    <p class="small text-muted mb-0">Type</p>
-                                    <p class="h4 mb-0">{{ $appartement->type_appartement }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-info bg-opacity-10 p-3 rounded-3 me-3">
-                                    <i class="fas fa-ruler-combined text-info fs-4"></i>
-                                </div>
-                                <div>
-                                    <p class="small text-muted mb-0">Surface</p>
-                                    <p class="h4 mb-0">{{ $appartement->surface }} m²</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-warning bg-opacity-10 p-3 rounded-3 me-3">
-                                    <i class="fas fa-door-closed text-warning fs-4"></i>
-                                </div>
-                                <div>
-                                    <p class="small text-muted mb-0">Nombre de pièces</p>
-                                    <p class="h4 mb-0">{{ $appartement->nombre_pieces }} pièces</p>
-                                </div>
-                            </div>
+                        <div class="header-actions">
+                            <a href="{{ route('syndic.tickets.index') }}" class="btn btn-outline-modern">
+                                <i class="fas fa-arrow-left me-2"></i>Retour
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Statut et actions -->
-        <div class="col-lg-4">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-flag me-2"></i>
-                        Statut
-                    </h5>
+        <div class="row g-4">
+            <!-- Informations principales -->
+            <div class="col-lg-8">
+                <div class="info-card">
+                    <div class="info-header">
+                        <div class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div>
+                            <h3 class="info-title">Informations du ticket</h3>
+                            <p class="info-subtitle">Détails et caractéristiques</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="detail-group">
+                                    <label class="detail-label">
+                                        <div class="label-icon">
+                                            <i class="fas fa-building"></i>
+                                        </div>
+                                        <span>Appartement</span>
+                                    </label>
+                                    <div class="detail-value">Bloc {{ $ticket->appartement->bloc->nom }} - Appt {{ $ticket->appartement->numero }}</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="detail-group">
+                                    <label class="detail-label">
+                                        <div class="label-icon">
+                                            <i class="fas fa-tools"></i>
+                                        </div>
+                                        <span>Type d'incident</span>
+                                    </label>
+                                    <div class="detail-value">{{ ucfirst($ticket->type_incident) }}</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="detail-group">
+                                    <label class="detail-label">
+                                        <div class="label-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <span>Date de création</span>
+                                    </label>
+                                    <div class="detail-value">{{ $ticket->created_at->format('d/m/Y à H:i') }}</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="detail-group">
+                                    <label class="detail-label">
+                                        <div class="label-icon">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <span>Créé par</span>
+                                    </label>
+                                    <div class="detail-value">{{ $ticket->createdBy->name }}</div>
+                                </div>
+                            </div>
+
+                            @if($ticket->cout_estime)
+                            <div class="col-md-6">
+                                <div class="detail-group">
+                                    <label class="detail-label">
+                                        <div class="label-icon">
+                                            <i class="fas fa-calculator"></i>
+                                        </div>
+                                        <span>Coût estimé</span>
+                                    </label>
+                                    <div class="detail-value-with-unit">
+                                        <span class="value">{{ number_format($ticket->cout_estime, 2) }}</span>
+                                        <span class="unit">DT</span>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
+                            @if($ticket->cout_reel)
+                            <div class="col-md-6">
+                                <div class="detail-group">
+                                    <label class="detail-label">
+                                        <div class="label-icon">
+                                            <i class="fas fa-receipt"></i>
+                                        </div>
+                                        <span>Coût réel</span>
+                                    </label>
+                                    <div class="detail-value-with-unit">
+                                        <span class="value">{{ number_format($ticket->cout_reel, 2) }}</span>
+                                        <span class="unit">DT</span>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mt-4">
+                            <label class="detail-label">
+                                <div class="label-icon">
+                                    <i class="fas fa-align-left"></i>
+                                </div>
+                                <span>Description</span>
+                            </label>
+                            <div class="detail-value">{{ $ticket->description }}</div>
+                        </div>
+
+                        <!-- Photos -->
+                        @if($ticket->photos && count($ticket->photos) > 0)
+                        <div class="mt-4">
+                            <label class="detail-label">
+                                <div class="label-icon">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                                <span>Photos</span>
+                            </label>
+                            <div class="photos-grid">
+                                @foreach($ticket->photos as $photo)
+                                <div class="photo-item">
+                                    <img src="{{ Storage::url($photo) }}" alt="Photo du ticket">
+                                    <div class="photo-overlay">
+                                        <a href="{{ Storage::url($photo) }}" target="_blank" class="photo-btn">
+                                            <i class="fas fa-expand"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Notes de résolution -->
+                        @if($ticket->notes_resolution)
+                        <div class="mt-4">
+                            <label class="detail-label">
+                                <div class="label-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <span>Notes de résolution</span>
+                            </label>
+                            <div class="detail-value notes-resolution">
+                                {{ $ticket->notes_resolution }}
+                                @if($ticket->date_resolution)
+                                <div class="resolution-date">
+                                    Résolu le {{ \Carbon\Carbon::parse($ticket->date_resolution)->format('d/m/Y à H:i') }}
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        @endif
+                    </div>
                 </div>
-                <div class="card-body text-center">
-                    @switch($appartement->statut)
-                        @case('libre')
-                            <div class="text-success mb-3">
-                                <i class="fas fa-check-circle fa-3x"></i>
-                            </div>
-                            <h4 class="text-success">Libre</h4>
-                            <p class="text-muted">Appartement disponible</p>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Statut -->
+                <div class="clean-section">
+                    <h6 class="clean-title">Statut</h6>
+                    @switch($ticket->statut)
+                        @case('ouvert')
+                            <span class="status-badge ouvert">Ouvert</span>
                             @break
-                        @case('occupe')
-                            <div class="text-warning mb-3">
-                                <i class="fas fa-user fa-3x"></i>
-                            </div>
-                            <h4 class="text-warning">Occupé</h4>
-                            <p class="text-muted">Appartement occupé</p>
+                        @case('en_cours')
+                            <span class="status-badge en-cours">En cours</span>
                             @break
-                        @case('travaux')
-                            <div class="text-info mb-3">
-                                <i class="fas fa-tools fa-3x"></i>
-                            </div>
-                            <h4 class="text-info">En travaux</h4>
-                            <p class="text-muted">Rénovation en cours</p>
+                        @case('resolu')
+                            <span class="status-badge resolu">Résolu</span>
                             @break
-                        @case('reserve')
-                            <div class="text-secondary mb-3">
-                                <i class="fas fa-clock fa-3x"></i>
-                            </div>
-                            <h4 class="text-secondary">Réservé</h4>
-                            <p class="text-muted">En cours de négociation</p>
-                            @break
-                        @case('maintenance')
-                            <div class="text-danger mb-3">
-                                <i class="fas fa-wrench fa-3x"></i>
-                            </div>
-                            <h4 class="text-danger">Maintenance</h4>
-                            <p class="text-muted">Maintenance technique</p>
+                        @case('ferme')
+                            <span class="status-badge ferme">Fermé</span>
                             @break
                     @endswitch
                 </div>
-            </div>
 
-            <!-- Informations du bloc -->
-            <div class="card shadow-sm mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-building me-2"></i>
-                        Informations du bloc
-                    </h5>
+                <!-- Priorité -->
+                <div class="clean-section">
+                    <h6 class="clean-title">Priorité</h6>
+                    @switch($ticket->priorite)
+                        @case('basse')
+                            <span class="status-badge basse">Basse</span>
+                            @break
+                        @case('moyenne')
+                            <span class="status-badge moyenne">Moyenne</span>
+                            @break
+                        @case('haute')
+                            <span class="status-badge haute">Haute</span>
+                            @break
+                        @case('urgente')
+                            <span class="status-badge urgente">Urgente</span>
+                            @break
+                    @endswitch
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="small text-muted">Immeuble</label>
-                        <p class="mb-0"><strong>{{ $appartement->bloc->immeuble->nom }}</strong></p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="small text-muted">Bloc</label>
-                        <p class="mb-0"><strong>{{ $appartement->bloc->nom }}</strong></p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="small text-muted">Adresse</label>
-                        <p class="mb-0">{{ $appartement->bloc->immeuble->adresse }}</p>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Actions -->
-            <div class="card shadow-sm mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-cogs me-2"></i>
-                        Actions
-                    </h5>
+                <!-- Assignation -->
+                <div class="clean-section">
+                    <h6 class="clean-title">Assignation</h6>
+                    <div class="clean-content">
+                        @if($ticket->assignedTo)
+                            <div class="info-row"><span class="label">Technicien</span> {{ $ticket->assignedTo->name }}</div>
+                        @else
+                            <div class="info-row"><span class="label">Statut</span> Non assigné</div>
+                        @endif
+                    </div>
                 </div>
-                <div class="card-body">
-                    <a href="{{ route('promoteur.appartements.edit', $appartement->id) }}" class="btn btn-warning w-100 mb-2">
-                        <i class="fas fa-edit me-2"></i>Modifier l'appartement
-                    </a>
-                    
-                    @if($appartement->statut !== 'occupe')
-                        <form method="POST" action="{{ route('promoteur.appartements.destroy', $appartement->id) }}" 
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet appartement ?')">
+
+                <!-- Actions -->
+                <div class="clean-section">
+                    <h6 class="clean-title">Actions</h6>
+                    <div class="clean-content">
+                        <form method="POST" action="{{ route('syndic.tickets.status', $ticket) }}" class="action-form">
                             @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger w-100">
-                                <i class="fas fa-trash me-2"></i>Supprimer
+                            @method('PUT')
+                            
+                            <div class="form-group">
+                                <label class="form-label">Statut</label>
+                                <select name="statut" class="form-control">
+                                    <option value="ouvert" {{ $ticket->statut == 'ouvert' ? 'selected' : '' }}>Ouvert</option>
+                                    <option value="en_cours" {{ $ticket->statut == 'en_cours' ? 'selected' : '' }}>En cours</option>
+                                    <option value="resolu" {{ $ticket->statut == 'resolu' ? 'selected' : '' }}>Résolu</option>
+                                    <option value="ferme" {{ $ticket->statut == 'ferme' ? 'selected' : '' }}>Fermé</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Coût réel (DT)</label>
+                                <input type="number" step="0.01" name="cout_reel" class="form-control" value="{{ $ticket->cout_reel }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Notes de résolution</label>
+                                <textarea name="notes_resolution" class="form-control" rows="3">{{ $ticket->notes_resolution }}</textarea>
+                            </div>
+
+                            <button type="submit" class="clean-btn primary">
+                                Mettre à jour
                             </button>
                         </form>
-                    @else
-                        <button class="btn btn-outline-danger w-100" disabled title="Impossible de supprimer un appartement occupé">
-                            <i class="fas fa-trash me-2"></i>Supprimer (Bloqué)
-                        </button>
-                    @endif
+
+                        @if($techniciens->count() > 0)
+                        <form method="POST" action="{{ route('syndic.tickets.assign', $ticket) }}" class="action-form mt-3">
+                            @csrf
+                            <div class="form-group">
+                                <label class="form-label">Assigner à</label>
+                                <select name="assignee_id" class="form-control" required>
+                                    <option value="">Sélectionner un technicien</option>
+                                    @foreach($techniciens as $technicien)
+                                    <option value="{{ $technicien->user->id }}" 
+                                            {{ $ticket->assignee_id == $technicien->user->id ? 'selected' : '' }}>
+                                        {{ $technicien->user->name }}
+                                        @if($technicien->specialites)
+                                            - {{ $technicien->specialites }}
+                                        @endif
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <button type="submit" class="clean-btn warning">
+                                Assigner
+                            </button>
+                        </form>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Informations complémentaires -->
+                <div class="clean-section">
+                    <h6 class="clean-title">Informations complémentaires</h6>
+                    <div class="clean-content">
+                        <div class="info-row"><span class="label">Numéro</span> {{ $ticket->numero_ticket }}</div>
+                        <div class="info-row"><span class="label">Créé le</span> {{ $ticket->created_at->format('d/m/Y à H:i') }}</div>
+                        <div class="info-row"><span class="label">Modifié le</span> {{ $ticket->updated_at->format('d/m/Y à H:i') }}</div>
+                        @if($ticket->date_resolution)
+                        <div class="info-row"><span class="label">Résolu le</span> {{ \Carbon\Carbon::parse($ticket->date_resolution)->format('d/m/Y à H:i') }}</div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Historique (optionnel pour plus tard) -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-history me-2"></i>
-                        Informations complémentaires
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Créé le :</strong> {{ $appartement->created_at->format('d/m/Y à H:i') }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Dernière modification :</strong> {{ $appartement->updated_at->format('d/m/Y à H:i') }}</p>
-                        </div>
-                    </div>
-                    
-                    @if($appartement->proprietaire)
-                        <hr>
-                        <h6>Propriétaire actuel</h6>
-                        <p>{{ $appartement->proprietaire->nom }} {{ $appartement->proprietaire->prenom }}</p>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <style>
+        /* Variables couleurs */
+        :root {
+            --primary: #173B61;
+            --primary-dark: #17616E;
+            --primary-light: #7697A0;
+            --accent: #FD8916;
+            --accent-light: #FFEBD0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --secondary: #6b7280;
+        }
+
+        body {
+            background-color: var(--accent-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, var(--accent) 100%);
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(23, 59, 97, 0.3);
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: var(--primary-light);
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .btn-outline-modern {
+            background: white;
+            border: 2px solid var(--primary-light);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-outline-modern:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(23, 59, 97, 0.3);
+        }
+
+        /* Card principale */
+        .info-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, var(--accent) 100%);
+        }
+
+        .info-header {
+            display: flex;
+            align-items: center;
+            padding: 2rem 2rem 1.5rem 2rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .info-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(23, 59, 97, 0.3);
+        }
+
+        .info-icon i {
+            font-size: 22px;
+            color: white;
+        }
+
+        .info-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0 0 0.25rem 0;
+        }
+
+        .info-subtitle {
+            color: var(--primary-light);
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .info-body {
+            padding: 2rem;
+        }
+
+        /* Détails */
+        .detail-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .label-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-light), #FFF8E1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+            border: 1px solid rgba(253, 137, 22, 0.2);
+        }
+
+        .label-icon i {
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+
+        .detail-value {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .detail-value-with-unit {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .detail-value-with-unit .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .detail-value-with-unit .unit {
+            color: var(--primary-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: linear-gradient(135deg, var(--accent-light), #FFF8E1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(253, 137, 22, 0.2);
+        }
+
+        /* Photos */
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo-item:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        .photo-btn {
+            color: white;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+
+        /* Notes de résolution */
+        .notes-resolution {
+            background: #f0f9ff !important;
+            border-color: #0ea5e9 !important;
+        }
+
+        .resolution-date {
+            font-size: 0.85rem;
+            color: var(--primary-light);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* Sidebar */
+        .clean-section {
+            background: #fafbfc;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            border-left: 3px solid var(--accent);
+        }
+
+        .clean-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0 0 1rem 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .clean-content {
+            color: var(--primary);
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-row .label {
+            min-width: 80px;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-right: 1rem;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.ouvert { background: #dbeafe; color: #1e40af; }
+        .status-badge.en-cours { background: #fef3c7; color: #92400e; }
+        .status-badge.resolu { background: #d1fae5; color: #065f46; }
+        .status-badge.ferme { background: #f3f4f6; color: #374151; }
+        .status-badge.basse { background: #d1fae5; color: #065f46; }
+        .status-badge.moyenne { background: #fef3c7; color: #92400e; }
+        .status-badge.haute { background: #fecaca; color: #991b1b; }
+        .status-badge.urgente { background: #fee2e2; color: #7f1d1d; }
+
+        /* Formulaires */
+        .action-form {
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(253, 137, 22, 0.1);
+        }
+
+        /* Boutons */
+        .clean-btn {
+            display: block;
+            width: 100%;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .clean-btn:last-child {
+            margin-bottom: 0;
+        }
+
+        .clean-btn.primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .clean-btn.primary:hover {
+            background: #e07706;
+            color: white;
+        }
+
+        .clean-btn.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .clean-btn.warning:hover {
+            background: #d97706;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-card {
+                padding: 1.5rem;
+            }
+            
+            .header-card .d-flex {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .info-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            
+            .info-icon {
+                margin: 0 auto 1rem auto;
+            }
+            
+            .info-body {
+                padding: 1.5rem;
+            }
+            
+            .photos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statutSelect = document.querySelector('select[name="statut"]');
+            const notesTextarea = document.querySelector('textarea[name="notes_resolution"]');
+            
+            if (statutSelect && notesTextarea) {
+                statutSelect.addEventListener('change', function() {
+                    const label = notesTextarea.previousElementSibling;
+                    if (this.value === 'resolu') {
+                        notesTextarea.required = true;
+                        label.innerHTML = 'Notes de résolution <span style="color: #ef4444;">*</span>';
+                    } else {
+                        notesTextarea.required = false;
+                        label.textContent = 'Notes de résolution';
+                    }
+                });
+            }
+        });
+    </script>
 @endsection

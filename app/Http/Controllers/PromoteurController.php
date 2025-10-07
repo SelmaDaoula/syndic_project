@@ -30,35 +30,44 @@ class PromoteurController extends Controller
      */
     public function dashboard()
     {
-        try {
-            $user = Auth::user();
-            $promoteur = Promoteur::where('user_id', $user->id)->first();
+        $user = Auth::user();
+        $promoteur = $user->promoteur;
 
-            if (!$promoteur) {
-                return redirect()->route('dashboard')
-                    ->withErrors(['error' => 'Profil promoteur non trouvé.']);
+        if (!$promoteur) {
+            return redirect()->route('user.login')->with('error', 'Profil promoteur introuvable');
+        }
+
+        // Récupérer les immeubles du promoteur avec leurs relations
+        $immeubles = $promoteur->immeubles()
+            ->with(['blocs'])
+            ->latest()
+            ->get();
+
+        // Calculer les statistiques
+        $totalAppartements = 0;
+        $syndicAssignes = 0;
+
+        foreach ($immeubles as $immeuble) {
+            // Compter les appartements via les blocs
+            foreach ($immeuble->blocs as $bloc) {
+                $totalAppartements += $bloc->nombre_appartement ?? 0;
             }
 
-            $immeuble = Immeuble::where('promoteur_id', $user->id)->with('blocs')->first();
-
-            // Statistiques pour le dashboard
-            $stats = [
-                'has_immeuble' => $immeuble ? true : false,
-                'total_blocs' => $immeuble ? $immeuble->blocs->count() : 0,
-                'total_appartements' => $immeuble ? $immeuble->blocs->sum('nombreAppartement') : 0,
-                'syndic_assigned' => $immeuble && $immeuble->syndic_id ? true : false,
-                'immeuble_status' => $immeuble ? $immeuble->statut : null,
-            ];
-
-            // FIXÉ: Utiliser la vue qui existe
-            return view('dashboards.promoteur', compact('promoteur', 'immeuble', 'stats'));
-
-        } catch (\Exception $e) {
-            Log::error('Erreur PromoteurController@dashboard: ' . $e->getMessage());
-            return redirect()->route('dashboard')->withErrors(['error' => 'Erreur lors du chargement.']);
+            // Compter les syndics assignés
+            if ($immeuble->syndic_id) {
+                $syndicAssignes++;
+            }
         }
-    }
 
+        $stats = [
+            'total_immeubles' => $immeubles->count(),
+            'total_appartements' => $totalAppartements,
+            'syndics_actifs' => $syndicAssignes,
+            'jours_restants' => 0, // Calculé dans la vue maintenant
+        ];
+
+        return view('dashboards.promoteur', compact('user', 'promoteur', 'immeubles', 'stats'));
+    }
     // SUPPRIMÉ : index(), create(), store() - maintenant gérés par ImmeubleController
 
     /**

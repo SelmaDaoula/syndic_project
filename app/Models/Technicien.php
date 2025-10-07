@@ -7,12 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Technicien extends Model
 {
-    public function ticketsAssignes()
-{
-    return $this->hasMany(TicketIncident::class, 'technicien_id');
-}
+    // Ajoutez ces propriétés à votre modèle Technicien
+    protected $fillable = [
+        'nom',
+        'prenom',
+        'email',
+        'telephone',
+        'user_id',
+        'specialite',
+        'is_suspended'
+    ];
 
- public function user()
+    protected $casts = [
+        'is_suspended' => 'boolean',
+    ];
+    public function ticketsAssignes()
+    {
+        return $this->hasMany(TicketIncident::class, 'technicien_id');
+    }
+
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
